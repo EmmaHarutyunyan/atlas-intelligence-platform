@@ -111,3 +111,11 @@ pytest
 ## Limitations
 
 Atlas intentionally limits pagination and records per job to prevent uncontrolled crawling. Websites protected by authentication, CAPTCHAs, robots/policies that deny access, or heavily interactive workflows may still require site-specific handling. AI extraction is optional and is not required for the normal scraping pipeline.
+
+<img width="2482" height="4752" alt="Image" src="https://github.com/user-attachments/assets/f9accc9a-8f2d-4bdf-9392-834cb7e2e818" />
+
+<img width="2482" height="4752" alt="Image" src="https://github.com/user-attachments/assets/c83f55e9-4e0d-4c23-a42a-6c21829b73e7" />
+
+<img width="2490" height="3258" alt="Image" src="https://github.com/user-attachments/assets/d0a30539-b008-4135-8be0-a6b0a55df735" />
+
+<img width="2490" height="5650" alt="Image" src="https://github.com/user-attachments/assets/06698410-2b7a-41c3-87bd-bf62ffeaf4c2" />
