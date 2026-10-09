@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <div class="mb-5">
+    <span class="badge-eyebrow mono">{% if editing %}edit job{% else %}new job{% endif %}</span>
+    <h1 class="display-font mt-2">{% if editing %}Edit scraping job{% else %}Create scraping job{% endif %}</h1>
+    <p class="text-secondary">Give Atlas a public URL and choose how it should collect the data.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="glass-card p-4 p-md-5">
+        <form method="post">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          {% for field in form %}
+            <div class="mb-4">
+              {% if field.field.widget.input_type == "checkbox" %}
+                <div class="form-check">{{ field }} <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+              {% else %}
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+              {% endif %}
+              {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+              {% for error in field.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+            </div>
+          {% endfor %}
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-df-primary">{% if editing %}Save changes{% else %}Create job{% endif %}</button>
+            <a href="{% if editing %}{% url 'job_detail' job.id %}{% else %}{% url 'dashboard' %}{% endif %}" class="btn btn-df-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="glass-card p-4">
+        <h2 class="h5">How Automatic works</h2>
+        <p class="text-secondary small">Atlas starts with a normal HTTP request. If the page does not expose useful content, it can fall back to Playwright and then Selenium.</p>
+        <ul class="text-secondary small mb-0">
+          <li>Static HTML first</li><li>JavaScript rendering only when needed</li><li>SSRF validation before requests and redirects</li><li>Structured JSON-LD extraction</li><li>Records are deduplicated in PostgreSQL</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

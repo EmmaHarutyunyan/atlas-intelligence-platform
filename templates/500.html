@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Something broke — Atlas Intelligence Platform</title>
+  <!--
+    This page intentionally does NOT extend base.html or load static files.
+    A 500 error can mean something upstream (settings, static config, a
+    broken context processor) is already in a bad state — the error page
+    itself has to render with zero dependencies, or you risk masking the
+    real error with a second one.
+  -->
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0f14;
+      color: #e6edf3;
+      font-family: -apple-system, "Segoe UI", Inter, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    .card {
+      max-width: 440px;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #2dd4bf;
+      background: rgba(45, 212, 191, 0.1);
+      border: 1px solid rgba(45, 212, 191, 0.25);
+      border-radius: 999px;
+      padding: 0.3rem 0.75rem;
+      margin-bottom: 1rem;
+    }
+    h1 { font-size: 1.6rem; margin: 0 0 0.75rem; }
+    p { color: #93a1b0; line-height: 1.6; margin: 0 0 1.5rem; }
+    a {
+      display: inline-block;
+      background: linear-gradient(135deg, #2dd4bf, #8b5cf6);
+      color: #06111a;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 0.65rem 1.4rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="eyebrow">500</span>
+    <h1>Something broke on our end</h1>
+    <p>
+      This has been logged and flagged for review. It's not something you
+      did — try again in a moment, or head back to the homepage.
+    </p>
+    <a href="/">Back to homepage</a>
+  </div>
+</body>
+</html>

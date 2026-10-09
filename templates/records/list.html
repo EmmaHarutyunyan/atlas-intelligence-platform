@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div><span class="badge-eyebrow mono">records</span><h1 class="display-font mt-2 mb-1">Collected intelligence</h1><p class="text-secondary mb-0">Search, filter and export your structured records.</p></div>
+    <div class="d-flex gap-2"><a href="{% url 'export_csv' %}?search={{ search|urlencode }}&type={{ record_type|urlencode }}&job={{ job_id|urlencode }}" class="btn btn-df-secondary">CSV</a><a href="{% url 'export_xlsx' %}?search={{ search|urlencode }}&type={{ record_type|urlencode }}&job={{ job_id|urlencode }}" class="btn btn-df-primary">XLSX</a></div>
+  </div>
+  <div class="glass-card p-4 mb-4">
+    <form method="get" class="row g-3 align-items-end">
+      <div class="col-lg-5"><label class="form-label">Search</label><input name="search" value="{{ search }}" class="form-control" placeholder="Title, description or content"></div>
+      <div class="col-lg-2"><label class="form-label">Type</label><select name="type" class="form-select"><option value="">All types</option>{% for value in record_types %}<option value="{{ value }}" {% if record_type == value %}selected{% endif %}>{{ value|title }}</option>{% endfor %}</select></div>
+      <div class="col-lg-3"><label class="form-label">Job</label><select name="job" class="form-select"><option value="">All jobs</option>{% for job in jobs %}<option value="{{ job.id }}" {% if job_id == job.id|stringformat:"s" %}selected{% endif %}>{{ job.name }}</option>{% endfor %}</select></div>
+      <div class="col-lg-2"><button class="btn btn-df-primary w-100">Filter</button></div>
+    </form>
+  </div>
+  {% if records %}
+    <div class="glass-card"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Record</th><th>Type</th><th>Details</th><th>Job</th><th>Created</th><th></th></tr></thead><tbody>
+    {% for record in records %}<tr>
+      <td style="min-width:260px"><strong>{{ record.title|default:"Untitled" }}</strong><div class="small text-secondary">{{ record.url|truncatechars:70 }}</div>{% if record.description %}<div class="small text-secondary mt-1">{{ record.description|truncatechars:100 }}</div>{% endif %}</td>
+      <td><span class="badge text-bg-secondary">{{ record.record_type }}</span><div class="small text-secondary mt-1">{{ record.confidence }} confidence</div></td>
+      <td style="min-width:220px">{% with attrs=record.data.attributes %}{% if attrs.price %}<div>Price: {{ attrs.price }} {{ attrs.currency }}</div>{% endif %}{% if attrs.rating %}<div>Rating: {{ attrs.rating }}</div>{% endif %}{% if attrs.availability %}<div>{{ attrs.availability }}</div>{% endif %}{% endwith %}<div class="small text-secondary mt-1">{{ record.data.statistics.words|default:0 }} words · {{ record.data.statistics.links|default:0 }} links</div></td>
+      <td><a href="{% url 'job_detail' record.job.id %}">{{ record.job.name }}</a></td><td>{{ record.created_at|date:"M d, Y H:i" }}</td>
+      <td class="text-end"><a href="{% url 'record_detail' record.id %}" class="btn btn-sm btn-df-secondary">View</a><form method="post" action="{% url 'delete_record' record.id %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this record permanently?')">Delete</button></form></td>
+    </tr>{% endfor %}</tbody></table></div></div>
+    <nav class="mt-4"><ul class="pagination">{% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search|urlencode }}&type={{ record_type|urlencode }}&job={{ job_id|urlencode }}">Previous</a></li>{% endif %}<li class="page-item active"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>{% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search|urlencode }}&type={{ record_type|urlencode }}&job={{ job_id|urlencode }}">Next</a></li>{% endif %}</ul></nav>
+  {% else %}<div class="glass-card p-5 text-center"><h2 class="h4">No records found</h2><p class="text-secondary">Run a scraping job to start collecting data.</p><a href="{% url 'create_job' %}" class="btn btn-df-primary">Create scraping job</a></div>{% endif %}
+</div>
+{% endblock %}

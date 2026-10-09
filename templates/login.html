@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6 col-lg-5">
+
+            <div class="glass-card p-4 p-md-5">
+
+                <span class="badge-eyebrow mono">
+                    account
+                </span>
+
+                <h1 class="display-font mt-2">
+                    Log in
+                </h1>
+
+                <p class="text-secondary">
+                    Access your Atlas dashboard.
+                </p>
+
+
+                <form method="post" class="mt-4">
+
+                    {% csrf_token %}
+
+                    {{ form.non_field_errors }}
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-df-primary w-100">
+                        Log in
+                    </button>
+
+                </form>
+
+
+                <div class="mt-4 text-center">
+
+                    <a href="{% url 'password_reset_form' %}">
+                        Forgot your password?
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

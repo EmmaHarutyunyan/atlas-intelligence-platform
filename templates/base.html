@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Atlas Intelligence Platform — Enterprise Data Collection & Intelligence{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Collect, validate, deduplicate, and categorize web data at scale — orchestrated and monitored from one platform.{% endblock %}">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Favicon: inline SVG data URI, matches the <Atlas/> bracket wordmark — no binary asset needed -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230f1620'/%3E%3Ctext x='50' y='68' font-family='monospace' font-size='58' font-weight='700' fill='%232dd4bf' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+
+  <!-- Social preview -->
+  <meta property="og:title" content="{% block og_title %}Atlas Intelligence Platform{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Collect, validate, deduplicate, and categorize web data at scale.{% endblock %}">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#0b0f14">
+
+  <!-- Bootstrap (grid & utilities only — visual design lives in style.css) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Project stylesheet — all custom CSS lives here, never inline -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <a href="#main-content" class="visually-hidden-focusable">Skip to content</a>
+
+  <nav class="df-nav sticky-top">
+    <div class="container d-flex align-items-center justify-content-between py-3">
+      <a href="{% url 'home' %}" class="df-logo-mark d-flex align-items-center gap-2">
+        <span class="bracket">&lt;</span>Atlas<span class="bracket">/&gt;</span>
+      </a>
+
+      <div class="d-none d-md-flex align-items-center gap-4">
+        <a href="{% url 'home' %}#pipeline" class="text-secondary small">Pipeline</a>
+        <a href="{% url 'home' %}#platform" class="text-secondary small">Platform</a>
+        <a href="{% url 'home' %}#metrics" class="text-secondary small">Analytics</a>
+        <a href="{% url 'dashboard' %}" class="text-secondary small">Dashboard</a>
+        <a href="https://github.com" class="text-secondary small">GitHub</a>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <button
+          type="button"
+          id="theme-toggle"
+          class="btn btn-sm btn-df-secondary df-icon-btn"
+          aria-label="Toggle color theme"
+        >
+          <!-- sun: shown while in light mode (click to switch to dark) -->
+          <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+
+          <!-- moon: shown while in dark mode (click to switch to light) -->
+          <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          id="mobile-nav-toggle"
+          class="btn btn-sm btn-df-secondary df-icon-btn d-md-none"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
+        <a href="{% url 'login' %}" class="text-secondary small d-none d-sm-inline-block">Sign in</a>
+        <a href="{% url 'register' %}" class="btn btn-df-primary btn-sm d-none d-sm-inline-block">Start collecting data</a>
+      </div>
+    </div>
+
+    <div id="mobile-nav" class="d-md-none df-mobile-nav" hidden>
+      <a href="{% url 'home' %}#pipeline">Pipeline</a>
+      <a href="{% url 'home' %}#platform">Platform</a>
+      <a href="{% url 'home' %}#metrics">Analytics</a>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="https://github.com">GitHub</a>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-top py-5 mt-5">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+      <span class="df-logo-mark small text-secondary">
+        <span class="bracket">&lt;</span>Atlas<span class="bracket">/&gt;</span> — built as a systems-design reference project
+      </span>
+    </div>
+  </footer>
+
+  <!-- Chart.js only needed on pages that render charts (home, dashboard);
+       harmless to include globally at this project size. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.7/chart.umd.min.js" defer></script>
+
+  <!-- All project JavaScript lives here, never inline -->
+  <script src="{% static 'js/script.js' %}" defer></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

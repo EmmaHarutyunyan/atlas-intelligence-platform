@@ -1,0 +1,74 @@
+name: dataforge-ai
+
+x-django-common: &django-common
+  build:
+    context: .
+    dockerfile: docker/django/Dockerfile
+    args:
+      REQUIREMENTS_FILE: requirements/development.txt
+  env_file: .env
+  volumes:
+    - .:/app
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-dataforge}
+      POSTGRES_USER: ${DB_USER:-dataforge}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-dataforge}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dataforge}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    <<: *django-common
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  celery-worker:
+    <<: *django-common
+    command: ["celery", "-A", "config", "worker", "-l", "info"]
+
+  celery-beat:
+    <<: *django-common
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
+
+  flower:
+    <<: *django-common
+    command: ["celery", "-A", "config", "flower", "--port=5555"]
+    ports:
+      - "5555:5555"
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -1,0 +1,62 @@
+# Production overlay. Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Differences from the development stack:
+#   - Gunicorn instead of runserver, no bind-mounted source (image is immutable)
+#   - Nginx in front of Gunicorn
+#   - No port exposure on db/redis to the host
+#   - DEBUG=False via env_file pointing at a production .env
+
+services:
+  db:
+    ports: []
+
+  redis:
+    ports: []
+
+  web:
+    build:
+      args:
+        REQUIREMENTS_FILE: requirements/production.txt
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    command:
+      [
+        "gunicorn",
+        "config.wsgi:application",
+        "--bind", "0.0.0.0:8000",
+        "--workers", "4",
+        "--threads", "2",
+        "--timeout", "60",
+        "--access-logfile", "-",
+        "--error-logfile", "-",
+      ]
+    ports: []
+
+  celery-worker:
+    build:
+      args:
+        REQUIREMENTS_FILE: requirements/production.txt
+    volumes: []
+
+  celery-beat:
+    build:
+      args:
+        REQUIREMENTS_FILE: requirements/production.txt
+    volumes: []
+
+  nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/mediafiles:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
+  media_volume:

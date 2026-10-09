@@ -1,0 +1,520 @@
+/* ==========================================================================
+   Atlas Intelligence Platform — static/css/style.css
+   Single project stylesheet: design tokens, layout, and all component styles.
+   ==========================================================================
+   Token system (White / Black / Green — built for a data product):
+     bg-base        #FFFFFF   white
+     bg-surface     #FFFFFF   card base, pre-glass
+     bg-elevated    #F6F7F6   nav / elevated surfaces, faint green undertone
+     bg-inset       #EFF1EF   recessed surfaces (inputs, code blocks)
+     accent-green   #40966F   the one accent — buttons, links, data highlights
+     accent-forest  #0D3B24   deep secondary green, used sparingly
+     text-primary   #0A0A0A   near-black
+     text-secondary #4B524E
+     text-muted     #868C88
+     border-glass   rgba(10,10,10,.08)
+   Default theme is white; [data-theme="dark"] flips to black with the
+   greens brightened so they still read against it.
+
+   Fix notes (this revision):
+   - .df-icon-btn (the sun/moon/hamburger controls) and its SVGs were too
+     small once the emoji were swapped for line-art. Bumped the button from
+     38px to 42px and the icon from 18px to 22px with a slightly heavier
+     stroke (1.8), so they read at the same visual weight the emoji had.
+   Type: Space Grotesk (display) / Inter (body) / JetBrains Mono (data)
+   ========================================================================== */
+
+:root {
+  --bg-base: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f6f7f6;
+  --bg-inset: #eff1ef;
+  --accent-gradient: linear-gradient(135deg, #0f7045 0%, #14804f 55%, #1a8f5b 100%);
+  --accent-teal: #40966f;      /* primary green — kept variable name for drop-in compatibility */
+  --accent-violet: #0d3b24;    /* deep forest — kept variable name for drop-in compatibility */
+  --accent-amber: #6b7280;     /* neutral grey, used only for data labels */
+  --accent-red: #b3261e;
+  --text-primary: #0a0a0a;
+  --text-secondary: #4b524e;
+  --text-muted: #868c88;
+  --border-glass: rgba(10, 10, 10, 0.08);
+  --border-glass-strong: rgba(10, 10, 10, 0.15);
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark mode override, toggled via [data-theme="dark"] on <html>.
+   The greens brighten so they keep the same visual weight against black
+   that they had against white. */
+[data-theme="dark"] {
+  --bg-base: #0a0a0a;
+  --bg-surface: #121312;
+  --bg-elevated: #181a18;
+  --bg-inset: #060706;
+  --accent-teal: #739586;
+  --accent-violet: #8fe8bd;
+  --text-primary: #f5f6f4;
+  --text-secondary: #a4aaa6;
+  --text-muted: #61665f;
+  --border-glass: rgba(245, 246, 244, 0.08);
+  --border-glass-strong: rgba(245, 246, 244, 0.16);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, color-mix(in srgb, var(--accent-teal) 8%, transparent), transparent);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, .display-font {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.mono { font-family: var(--font-mono); }
+
+.text-secondary { color: var(--text-secondary) !important; }
+.text-muted-custom { color: var(--text-muted) !important; }
+
+a { color: inherit; text-decoration: none; }
+a.link-accent { color: var(--accent-teal); }
+a.link-accent:hover { text-decoration: underline; }
+
+hr.df-rule {
+  border: none;
+  border-top: 1px solid var(--border-glass);
+  margin: var(--space-8) 0;
+}
+
+/* --- Glassmorphism card primitive --------------------------------------- */
+.glass-card {
+  background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color 0.2s var(--ease-out), transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+.glass-card:hover {
+  border-color: var(--border-glass-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px -12px rgba(10, 10, 10, 0.12);
+}
+
+.glass-card--static:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Nav ------------------------------------------------------------------ */
+.df-nav {
+  background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
+  border-bottom: 1px solid var(--border-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1030;
+}
+
+.df-logo-mark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.df-logo-mark .bracket { color: var(--accent-teal); }
+
+.df-nav a.small {
+  position: relative;
+  transition: color 0.15s ease;
+}
+.df-nav a.small:not(.btn):hover { color: var(--text-primary) !important; }
+.df-nav a.small:not(.btn)::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 1px;
+  background: var(--accent-teal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s var(--ease-out);
+}
+.df-nav a.small:not(.btn):hover::after { transform: scaleX(1); }
+
+/* --- Buttons --------------------------------------------------------------- */
+.btn-df-primary {
+  background: var(--accent-teal);
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.4rem;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-df-primary:hover {
+  /* darken toward black instead of brightening — brightening a mid-light
+     green pushes it toward white, which was the bug */
+  background: color-mix(in srgb, var(--accent-teal) 85%, black 15%);
+  transform: translateY(-1px);
+  color: #ffffff;
+  box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent-teal) 55%, transparent);
+}
+.btn-df-primary:active {
+  transform: translateY(0);
+  background: color-mix(in srgb, var(--accent-teal) 75%, black 25%);
+}
+.btn-df-primary:focus-visible { outline: 2px solid var(--accent-teal); outline-offset: 2px; }
+
+.btn-df-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.4rem;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+.btn-df-secondary:hover {
+  border-color: var(--accent-teal);
+  background: color-mix(in srgb, var(--accent-teal) 8%, transparent);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+.btn-df-secondary:active { transform: translateY(0); }
+
+.btn-df-primary.btn-sm, .btn-df-secondary.btn-sm { padding: 0.45rem 1rem; font-size: 0.85rem; }
+
+/* --- Hero terminal / pipeline signature ------------------------------------ */
+.df-terminal {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-glass);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px -24px rgba(10, 10, 10, 0.18);
+}
+
+.df-terminal-bar {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-glass);
+  padding: 0.6rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.df-terminal-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--text-muted); opacity: 0.5;
+}
+
+.df-terminal-body {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  padding: 1.1rem 1.2rem;
+  color: var(--text-secondary);
+  min-height: 190px;
+}
+
+.df-terminal-body .kw { color: var(--accent-teal); }
+.df-terminal-body .str { color: var(--accent-amber); }
+.df-terminal-body .ok { color: var(--accent-violet); }
+
+.df-caret {
+  display: inline-block;
+  width: 7px; height: 1em;
+  background: var(--accent-teal);
+  vertical-align: text-bottom;
+  animation: df-blink 1s steps(1) infinite;
+}
+
+@keyframes df-blink { 50% { opacity: 0; } }
+
+/* --- Pipeline stage strip ---------------------------------------------------- */
+.df-pipeline {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.df-pipeline::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  right: 22px;
+  height: 1px;
+  background: var(--accent-teal);
+  opacity: 0.3;
+}
+
+.df-pipeline-node {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  text-align: center;
+}
+
+.df-pipeline-dot {
+  width: 44px; height: 44px;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--accent-teal);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.df-pipeline-node:hover .df-pipeline-dot {
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-teal) 12%, transparent);
+}
+
+/* --- Metric band ------------------------------------------------------------- */
+.df-stat-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* --- Icon buttons (theme toggle, mobile nav toggle) ------------------------- */
+.df-icon-btn {
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Neutral, single-color treatment for the theme toggle: no green tint, no
+   accent border, just a quiet grey wash on hover so it reads as a plain
+   utility control rather than a second accent button. */
+.df-icon-btn.btn-df-secondary {
+  color: var(--text-secondary);
+}
+.df-icon-btn.btn-df-secondary:hover {
+  border-color: var(--border-glass-strong);
+  background: var(--bg-inset);
+  color: var(--text-primary);
+}
+.df-icon-btn svg,
+.df-icon-btn img {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: currentColor;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+/* Theme toggle shows one icon per mode; JS flips a class on <html>, CSS does
+   the swapping — no inline script needed in the template. White is the
+   default, so the "dark" icon (moon) shows first and the "light" icon
+   (sun) appears once [data-theme="dark"] is set. */
+.theme-icon-light { display: none; }
+[data-theme="dark"] .theme-icon-dark { display: none; }
+[data-theme="dark"] .theme-icon-light { display: inline; }
+
+/* --- Mobile nav dropdown ------------------------------------------------------ */
+.df-mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 1.5rem 1.25rem;
+  border-top: 1px solid var(--border-glass);
+}
+
+.df-mobile-nav a {
+  color: var(--text-secondary);
+  padding: 0.65rem 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--border-glass);
+}
+.df-mobile-nav a:last-child { border-bottom: none; }
+
+/* --- Eyebrow badge ------------------------------------------------------------- */
+.badge-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-teal);
+  background: color-mix(in srgb, var(--accent-teal) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-teal) 25%, transparent);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.75rem;
+}
+
+/* uses color-mix (not a fixed rgba) because accent-violet's hex changes
+   between the white and dark themes — this keeps the tint correct in both */
+.badge-eyebrow--violet {
+  color: var(--accent-violet);
+  background: color-mix(in srgb, var(--accent-violet) 12%, transparent);
+  border-color: color-mix(in srgb, var(--accent-violet) 30%, transparent);
+}
+
+/* --- Feature card icon ---------------------------------------------------------- */
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-teal) 10%, transparent);
+  color: var(--accent-teal);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* --- Forms ------------------------------------------------------------------- */
+.df-field { margin-bottom: var(--space-3); }
+
+.df-label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.df-input {
+  width: 100%;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-glass-strong);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.df-input::placeholder { color: var(--text-muted); }
+
+.df-input:focus {
+  outline: none;
+  border-color: var(--accent-teal);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-teal) 14%, transparent);
+}
+
+.df-input:user-invalid {
+  border-color: var(--accent-red);
+}
+
+.df-check {
+  accent-color: var(--accent-teal);
+  width: 16px;
+  height: 16px;
+}
+
+/* --- Auth card shell ----------------------------------------------------------- */
+.auth-shell {
+  max-width: 420px;
+  width: 100%;
+}
+.auth-shell--wide { max-width: 460px; }
+
+/* --- Empty state --------------------------------------------------------------- */
+.df-empty-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent-teal) 8%, transparent);
+  border: 1px solid var(--border-glass);
+  font-family: var(--font-mono);
+  color: var(--accent-teal);
+  font-size: 1.3rem;
+}
+
+/* --- Flash messages (django.contrib.messages) ----------------------------------- */
+.df-alert {
+  border: 1px solid var(--border-glass);
+  background: var(--bg-surface);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.df-alert.success { border-color: color-mix(in srgb, var(--accent-teal) 32%, transparent); }
+.df-alert.error, .df-alert.danger { border-color: rgba(179, 38, 30, 0.4); color: var(--accent-red); }
+.df-alert.warning { border-color: rgba(107, 114, 128, 0.4); }
+.df-alert.info { border-color: color-mix(in srgb, var(--accent-violet) 40%, transparent); }
+
+/* --- Roadmap strip (dashboard placeholder) -------------------------------------- */
+.df-roadmap-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.df-roadmap-item .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+.df-roadmap-item.is-current { border-color: color-mix(in srgb, var(--accent-teal) 32%, transparent); color: var(--text-primary); }
+.df-roadmap-item.is-current .dot { background: var(--accent-teal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-teal) 18%, transparent); }
+
+/* --- Motion & accessibility --------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .df-caret { animation: none; }
+  .glass-card, .btn-df-primary, .btn-df-secondary, .df-nav a.small::after { transition: none; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-teal);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .df-pipeline { flex-direction: column; gap: 1.25rem; }
+  .df-pipeline::before { display: none; }
+}

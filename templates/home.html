@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ============================== HERO ============================== -->
+<section class="container py-5 mt-4">
+  <div class="row align-items-center g-5">
+    <div class="col-lg-6">
+      <span class="badge-eyebrow mono">v1.0 · reference architecture</span>
+      <h1 class="display-font mt-3" style="font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.08;">
+        Point it at the web.<br>Get back structured intelligence.
+      </h1>
+      <p class="text-secondary mt-3" style="font-size: 1.1rem; max-width: 46ch;">
+        Atlas Intelligence Platform turns scraping jobs into validated, deduplicated,
+        AI-categorized datasets — orchestrated, monitored, and queryable
+        through one platform.
+      </p>
+      <div class="d-flex flex-wrap gap-3 mt-4" id="get-started">
+        <a href="{% url 'register' %}" class="btn btn-df-primary">Start collecting data</a>
+        <a href="https://github.com" class="btn btn-df-secondary">View documentation</a>
+      </div>
+      <div class="d-flex gap-4 mt-5 flex-wrap">
+        <div>
+          <div class="df-stat-value">99.95%</div>
+          <div class="text-muted-custom small">Pipeline uptime</div>
+        </div>
+        <div>
+          <div class="df-stat-value">3</div>
+          <div class="text-muted-custom small">Scraper strategies</div>
+        </div>
+        <div>
+          <div class="df-stat-value">&lt;2s</div>
+          <div class="text-muted-custom small">Avg. categorization time</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="df-terminal">
+        <div class="df-terminal-bar">
+          <span class="df-terminal-dot"></span>
+          <span class="df-terminal-dot"></span>
+          <span class="df-terminal-dot"></span>
+          <span class="mono text-muted-custom small ms-2">scraping_run.log</span>
+        </div>
+        <div class="df-terminal-body" id="hero-terminal" data-typing-target aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PIPELINE ============================= -->
+<section id="pipeline" class="container py-5">
+  <div class="text-center mb-5">
+    <span class="badge-eyebrow mono">the pipeline</span>
+    <h2 class="display-font mt-2" style="font-size: clamp(1.6rem, 3vw, 2.2rem);">
+      Five stages between raw HTML and a trustworthy record
+    </h2>
+  </div>
+
+  <div class="df-pipeline">
+    <div class="df-pipeline-node">
+      <div class="df-pipeline-dot">01</div>
+      <div class="fw-semibold small">Collect</div>
+      <div class="text-muted-custom small px-2">Playwright, Selenium & BeautifulSoup behind one interface</div>
+    </div>
+    <div class="df-pipeline-node">
+      <div class="df-pipeline-dot">02</div>
+      <div class="fw-semibold small">Validate</div>
+      <div class="text-muted-custom small px-2">Pydantic schemas reject malformed records on arrival</div>
+    </div>
+    <div class="df-pipeline-node">
+      <div class="df-pipeline-dot">03</div>
+      <div class="fw-semibold small">Deduplicate</div>
+      <div class="text-muted-custom small px-2">Content hashing collapses near-duplicate records</div>
+    </div>
+    <div class="df-pipeline-node">
+      <div class="df-pipeline-dot">04</div>
+      <div class="fw-semibold small">Categorize</div>
+      <div class="text-muted-custom small px-2">AI tags and structures every record automatically</div>
+    </div>
+    <div class="df-pipeline-node">
+      <div class="df-pipeline-dot">05</div>
+      <div class="fw-semibold small">Analyze</div>
+      <div class="text-muted-custom small px-2">Query, chart, and export through the API or dashboard</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FEATURES ============================= -->
+<section id="platform" class="container py-5">
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="feature-icon">⇄</div>
+        <h3 class="h5 mt-3">Multi-strategy scraping</h3>
+        <p class="text-secondary small mb-0">Swap between Playwright, Selenium, and BeautifulSoup per job without changing calling code.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="feature-icon">⏱</div>
+        <h3 class="h5 mt-3">Async job orchestration</h3>
+        <p class="text-secondary small mb-0">Celery and Celery Beat run and schedule jobs with retries and idempotency built in.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="feature-icon">✺</div>
+        <h3 class="h5 mt-3">AI categorization</h3>
+        <p class="text-secondary small mb-0">Every record is tagged and structured through a swappable AI provider interface.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="feature-icon">⛊</div>
+        <h3 class="h5 mt-3">Teams & permissions</h3>
+        <p class="text-secondary small mb-0">Organizations, teams, and role-based access control are first-class, not bolted on.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="feature-icon">▤</div>
+        <h3 class="h5 mt-3">Analytics & export</h3>
+        <p class="text-secondary small mb-0">CSV and Excel export, plus scheduled reports delivered without manual work.</p>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <div class="feature-icon">◎</div>
+        <h3 class="h5 mt-3">Full observability</h3>
+        <p class="text-secondary small mb-0">Health checks, structured logs, and an audit trail on every sensitive action.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= METRICS ============================== -->
+<section id="metrics" class="container py-5">
+  <div class="glass-card p-4 p-md-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-5">
+        <span class="badge-eyebrow mono">analytics</span>
+        <h2 class="display-font mt-2" style="font-size: clamp(1.5rem, 2.6vw, 2rem);">
+          Records processed, visualized as they land
+        </h2>
+        <p class="text-secondary small mt-2">
+          Every scraping run streams into the same dashboard your team already
+          uses to review categorized output and export reports.
+        </p>
+      </div>
+      <div class="col-lg-7">
+        <canvas id="metrics-chart" height="220" data-chart="records-processed"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== CTA ================================ -->
+<section class="container py-5 text-center">
+  <h2 class="display-font" style="font-size: clamp(1.6rem, 3vw, 2.2rem);">
+    Ready to see raw pages become structured data?
+  </h2>
+  <p class="text-secondary mt-2">Spin up the stack locally with Docker Compose in under five minutes.</p>
+  <a href="{% url 'register' %}" class="btn btn-df-primary mt-3">Start collecting data</a>
+</section>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Page not found — Atlas Intelligence Platform{% endblock %}
+
+{% block content %}
+<section class="container text-center" style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center;">
+  <span class="badge-eyebrow mono mx-auto">404</span>
+  <h1 class="display-font mt-3" style="font-size: clamp(1.8rem, 3vw, 2.6rem);">
+    This page went missing mid-scrape
+  </h1>
+  <p class="text-secondary mt-2 mx-auto" style="max-width: 46ch;">
+    The page you're looking for doesn't exist, or the route changed. Check
+    the URL, or head back to the homepage.
+  </p>
+  <a href="{% url 'home' %}" class="btn btn-df-primary mt-4 mx-auto">Back to homepage</a>
+</section>
+{% endblock %}

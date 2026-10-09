@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <span class="badge-eyebrow mono">dashboard</span>
+
+            <h1 class="display-font mt-2">
+                Welcome back, {{ request.user.username }}
+            </h1>
+
+            <p class="text-secondary">
+                Manage your scraping jobs and collected intelligence.
+            </p>
+        </div>
+
+        <a href="{% url 'create_job' %}"
+           class="btn btn-df-primary">
+            + Create scraping job
+        </a>
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card p-4">
+                <div class="text-muted-custom small">
+                    Total jobs
+                </div>
+
+                <div class="df-stat-value mt-2">
+                    {{ total_jobs }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card p-4">
+                <div class="text-muted-custom small">
+                    Records
+                </div>
+
+                <div class="df-stat-value mt-2">
+                    {{ total_records }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card p-4">
+                <div class="text-muted-custom small">
+                    Completed
+                </div>
+
+                <div class="df-stat-value mt-2">
+                    {{ completed_jobs }}
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+            <div class="glass-card p-4">
+                <div class="text-muted-custom small">
+                    Failed
+                </div>
+
+                <div class="df-stat-value mt-2">
+                    {{ failed_jobs }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- JOBS -->
+
+    <div class="glass-card p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h2 class="h4 mb-1">
+                    Scraping jobs
+                </h2>
+
+                <p class="text-secondary small mb-0">
+                    Your configured data collection jobs.
+                </p>
+            </div>
+
+            <a href="{% url 'create_job' %}"
+               class="btn btn-df-secondary">
+                New job
+            </a>
+
+        </div>
+
+
+        {% if jobs %}
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Strategy</th>
+                        <th>Status</th>
+                        <th>Records</th>
+                        <th>Last run</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for job in jobs %}
+
+                    <tr>
+
+                        <td>
+                            <a href="{% url 'job_detail' job.id %}"
+                               class="fw-semibold text-decoration-none">
+                                {{ job.name }}
+                            </a>
+
+                            <div class="small text-secondary">
+                                {{ job.url|truncatechars:50 }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ job.get_strategy_display }}
+                        </td>
+
+                        <td>
+                            <span class="badge bg-secondary">
+                                {{ job.get_status_display }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ job.records_count }}
+                        </td>
+
+                        <td>
+                            {% if job.last_run %}
+                                {{ job.last_run|date:"M d, H:i" }}
+                            {% else %}
+                                Never
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'job_detail' job.id %}"
+                               class="btn btn-sm btn-df-secondary">
+                                Open
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <h3 class="h5">
+                    No scraping jobs yet
+                </h3>
+
+                <p class="text-secondary">
+                    Create your first job to start collecting data.
+                </p>
+
+                <a href="{% url 'create_job' %}"
+                   class="btn btn-df-primary">
+                    Create your first job
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

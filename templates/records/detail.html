@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex flex-wrap justify-content-between gap-3 mb-5"><div><span class="badge-eyebrow mono">record</span><h1 class="display-font mt-2">{{ record.title|default:"Untitled record" }}</h1><p class="text-secondary">{{ record.record_type }} · {{ record.confidence }} confidence</p></div><div class="d-flex gap-2">{% if record.url %}<a href="{{ record.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-df-primary">Open source</a>{% endif %}<a href="{% url 'records' %}" class="btn btn-df-secondary">Back</a></div></div>
+  <div class="row g-4">
+    <div class="col-lg-7"><div class="glass-card p-4 mb-4"><h2 class="h5">Normalized data</h2><div class="row g-3 mt-1"><div class="col-md-6"><small class="text-secondary">Source URL</small><div class="text-break">{{ record.url|default:"—" }}</div></div><div class="col-md-6"><small class="text-secondary">Job</small><div><a href="{% url 'job_detail' record.job.id %}">{{ record.job.name }}</a></div></div><div class="col-12"><small class="text-secondary">Description</small><div>{{ record.description|default:"—" }}</div></div><div class="col-12"><small class="text-secondary">Content</small><div style="white-space:pre-wrap">{{ record.content|default:"No content extracted." }}</div></div></div></div>
+    <div class="glass-card p-4"><h2 class="h5">Structured data</h2><pre class="small text-break mb-0">{{ record.structured_data|pprint }}</pre></div></div>
+    <div class="col-lg-5"><div class="glass-card p-4 mb-4"><h2 class="h5">Attributes</h2><pre class="small text-break mb-0">{{ record.data.attributes|pprint }}</pre></div><div class="glass-card p-4"><h2 class="h5">Extraction metadata</h2><pre class="small text-break mb-0">{{ record.data|pprint }}</pre></div></div>
+  </div>
+</div>
+{% endblock %}

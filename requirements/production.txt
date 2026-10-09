@@ -1,0 +1,7 @@
+-r base.txt
+
+# Static file serving
+whitenoise==6.8.2
+
+# Production WSGI tuning
+gevent==24.11.1
