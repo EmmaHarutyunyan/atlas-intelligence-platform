@@ -26,7 +26,9 @@ class PlaywrightStrategy(ScrapingStrategy):
                     route.continue_()
 
                 page.route("**/*", guard)
-                response = page.goto(safe_url, wait_until="domcontentloaded", timeout=timeout * 1000)
+                response = page.goto(
+                    safe_url, wait_until="domcontentloaded", timeout=timeout * 1000
+                )
                 page.wait_for_load_state("networkidle", timeout=10_000)
                 final_url = validate_url(page.url)
                 return ScrapeResult(

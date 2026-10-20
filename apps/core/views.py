@@ -1,6 +1,4 @@
 import csv
-import json
-from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import login
@@ -10,11 +8,10 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 from openpyxl import Workbook
 
 from .forms import ScrapeJobForm
-from .models import JobRun, ScrapeJob, ScrapedRecord
+from .models import JobRun, ScrapedRecord, ScrapeJob
 from .services.scheduler import sync_job_schedule
 from .tasks import run_scrape_job
 
@@ -27,7 +24,11 @@ def home(request):
 def dashboard(request):
     jobs = ScrapeJob.objects.filter(user=request.user).order_by("-created_at")
     total_records = ScrapedRecord.objects.filter(job__user=request.user).count()
-    recent_runs = JobRun.objects.filter(job__user=request.user).select_related("job").order_by("-started_at")[:10]
+    recent_runs = (
+        JobRun.objects.filter(job__user=request.user)
+        .select_related("job")
+        .order_by("-started_at")[:10]
+    )
     context = {
         "jobs": jobs,
         "total_jobs": jobs.count(),
@@ -36,7 +37,12 @@ def dashboard(request):
         "failed_jobs": jobs.filter(status="failed").count(),
         "running_jobs": jobs.filter(status="running").count(),
         "recent_runs": recent_runs,
-        "records_by_job": list(ScrapedRecord.objects.filter(job__user=request.user).values("job__name").annotate(count=Count("id")).order_by("-count")[:10]),
+        "records_by_job": list(
+            ScrapedRecord.objects.filter(job__user=request.user)
+            .values("job__name")
+            .annotate(count=Count("id"))
+            .order_by("-count")[:10]
+        ),
     }
     return render(request, "dashboard.html", context)
 
@@ -103,6 +109,7 @@ def delete_job(request, job_id):
     job = get_object_or_404(ScrapeJob, id=job_id, user=request.user)
     if request.method == "POST":
         from django_celery_beat.models import PeriodicTask
+
         PeriodicTask.objects.filter(name=f"atlas-job-{job.pk}").delete()
         job.delete()
         messages.success(request, "Job deleted.")
@@ -117,9 +124,20 @@ def records(request):
     record_type = request.GET.get("type", "").strip()
     job_id = request.GET.get("job", "").strip()
     ordering = request.GET.get("ordering", "-created_at")
-    allowed_ordering = {"created_at", "-created_at", "title", "-title", "record_type", "-record_type"}
+    allowed_ordering = {
+        "created_at",
+        "-created_at",
+        "title",
+        "-title",
+        "record_type",
+        "-record_type",
+    }
     if search:
-        queryset = queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(content__icontains=search))
+        queryset = queryset.filter(
+            Q(title__icontains=search)
+            | Q(description__icontains=search)
+            | Q(content__icontains=search)
+        )
     if record_type:
         queryset = queryset.filter(record_type=record_type)
     if job_id.isdigit():
@@ -127,7 +145,18 @@ def records(request):
     queryset = queryset.order_by(ordering if ordering in allowed_ordering else "-created_at")
     paginator = Paginator(queryset, 25)
     page_obj = paginator.get_page(request.GET.get("page"))
-    context = {"records": page_obj, "page_obj": page_obj, "search": search, "record_type": record_type, "job_id": job_id, "jobs": ScrapeJob.objects.filter(user=request.user), "record_types": ScrapedRecord.objects.filter(job__user=request.user).values_list("record_type", flat=True).distinct().order_by("record_type")}
+    context = {
+        "records": page_obj,
+        "page_obj": page_obj,
+        "search": search,
+        "record_type": record_type,
+        "job_id": job_id,
+        "jobs": ScrapeJob.objects.filter(user=request.user),
+        "record_types": ScrapedRecord.objects.filter(job__user=request.user)
+        .values_list("record_type", flat=True)
+        .distinct()
+        .order_by("record_type"),
+    }
     return render(request, "records/list.html", context)
 
 
@@ -146,7 +175,19 @@ def analytics(request):
     total_records = ScrapedRecord.objects.filter(job__user=request.user).count()
     successful = runs.filter(status="completed").count()
     failed = runs.filter(status="failed").count()
-    context = {"jobs": ScrapeJob.objects.filter(user=request.user), "total_records": total_records, "total_runs": runs.count(), "successful_runs": successful, "failed_runs": failed, "category_data": list(ScrapedRecord.objects.filter(job__user=request.user).values("record_type").annotate(count=Count("id")).order_by("-count"))}
+    context = {
+        "jobs": ScrapeJob.objects.filter(user=request.user),
+        "total_records": total_records,
+        "total_runs": runs.count(),
+        "successful_runs": successful,
+        "failed_runs": failed,
+        "category_data": list(
+            ScrapedRecord.objects.filter(job__user=request.user)
+            .values("record_type")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        ),
+    }
     return render(request, "analytics.html", context)
 
 
@@ -154,7 +195,11 @@ def _filtered_records(request):
     queryset = ScrapedRecord.objects.filter(job__user=request.user).select_related("job")
     search = request.GET.get("search", "").strip()
     if search:
-        queryset = queryset.filter(Q(title__icontains=search) | Q(description__icontains=search) | Q(content__icontains=search))
+        queryset = queryset.filter(
+            Q(title__icontains=search)
+            | Q(description__icontains=search)
+            | Q(content__icontains=search)
+        )
     if request.GET.get("type"):
         queryset = queryset.filter(record_type=request.GET["type"])
     if request.GET.get("job", "").isdigit():
@@ -167,10 +212,36 @@ def export_csv(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="atlas_records.csv"'
     writer = csv.writer(response)
-    writer.writerow(["Title", "Type", "Price", "Rating", "Availability", "URL", "Image", "Confidence", "Job", "Created"])
+    writer.writerow(
+        [
+            "Title",
+            "Type",
+            "Price",
+            "Rating",
+            "Availability",
+            "URL",
+            "Image",
+            "Confidence",
+            "Job",
+            "Created",
+        ]
+    )
     for record in _filtered_records(request):
         attrs = record.data.get("attributes", {})
-        writer.writerow([record.title, record.record_type, attrs.get("price", ""), attrs.get("rating", ""), attrs.get("availability", ""), record.url, record.image_url, record.confidence, record.job.name, record.created_at])
+        writer.writerow(
+            [
+                record.title,
+                record.record_type,
+                attrs.get("price", ""),
+                attrs.get("rating", ""),
+                attrs.get("availability", ""),
+                record.url,
+                record.image_url,
+                record.confidence,
+                record.job.name,
+                record.created_at,
+            ]
+        )
     return response
 
 
@@ -179,11 +250,39 @@ def export_xlsx(request):
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = "Atlas Records"
-    sheet.append(["Title", "Type", "Price", "Rating", "Availability", "URL", "Image", "Confidence", "Job", "Created"])
+    sheet.append(
+        [
+            "Title",
+            "Type",
+            "Price",
+            "Rating",
+            "Availability",
+            "URL",
+            "Image",
+            "Confidence",
+            "Job",
+            "Created",
+        ]
+    )
     for record in _filtered_records(request):
         attrs = record.data.get("attributes", {})
-        sheet.append([record.title, record.record_type, attrs.get("price", ""), attrs.get("rating", ""), attrs.get("availability", ""), record.url, record.image_url, record.confidence, record.job.name, record.created_at])
-    response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        sheet.append(
+            [
+                record.title,
+                record.record_type,
+                attrs.get("price", ""),
+                attrs.get("rating", ""),
+                attrs.get("availability", ""),
+                record.url,
+                record.image_url,
+                record.confidence,
+                record.job.name,
+                record.created_at,
+            ]
+        )
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
     response["Content-Disposition"] = 'attachment; filename="atlas_records.xlsx"'
     workbook.save(response)
     return response

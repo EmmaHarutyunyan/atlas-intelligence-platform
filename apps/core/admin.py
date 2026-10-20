@@ -1,11 +1,20 @@
 from django.contrib import admin
 
-from .models import JobRun, ScrapeJob, ScrapedRecord
+from .models import JobRun, ScrapedRecord, ScrapeJob
 
 
 @admin.register(ScrapeJob)
 class ScrapeJobAdmin(admin.ModelAdmin):
-    list_display = ("name", "user", "strategy", "status", "schedule_enabled", "records_count", "last_run", "created_at")
+    list_display = (
+        "name",
+        "user",
+        "strategy",
+        "status",
+        "schedule_enabled",
+        "records_count",
+        "last_run",
+        "created_at",
+    )
     list_filter = ("status", "strategy", "schedule_enabled", "schedule_frequency")
     search_fields = ("name", "url", "user__username")
     readonly_fields = ("run_count", "records_count", "last_run", "created_at", "updated_at")
@@ -21,7 +30,15 @@ class ScrapedRecordAdmin(admin.ModelAdmin):
 
 @admin.register(JobRun)
 class JobRunAdmin(admin.ModelAdmin):
-    list_display = ("job", "status", "records_found", "records_created", "strategy_used", "started_at", "duration_seconds")
+    list_display = (
+        "job",
+        "status",
+        "records_found",
+        "records_created",
+        "strategy_used",
+        "started_at",
+        "duration_seconds",
+    )
     list_filter = ("status", "strategy_used", "started_at")
     search_fields = ("job__name", "error_message")
     readonly_fields = ("started_at", "finished_at", "duration_seconds")

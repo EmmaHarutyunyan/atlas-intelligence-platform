@@ -4,7 +4,7 @@ Optimized for developer feedback loops: verbose errors, permissive hosts,
 debug toolbar. Never used in CI or production.
 """
 
-from config.settings.base import *  
+from config.settings.base import *  # noqa: F403
 from config.settings.base import INSTALLED_APPS, MIDDLEWARE, env
 
 DEBUG = True

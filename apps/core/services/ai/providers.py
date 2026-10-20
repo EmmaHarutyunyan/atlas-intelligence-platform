@@ -27,8 +27,16 @@ class OpenAIProvider(AIProvider):
             temperature=0,
             response_format={"type": "json_object"},
             messages=[
-                {"role": "system", "content": "Extract only the requested fields. Return valid JSON."},
-                {"role": "user", "content": json.dumps({"schema": schema, "content": content[:20000]}, ensure_ascii=False)},
+                {
+                    "role": "system",
+                    "content": "Extract only the requested fields. Return valid JSON.",
+                },
+                {
+                    "role": "user",
+                    "content": json.dumps(
+                        {"schema": schema, "content": content[:20000]}, ensure_ascii=False
+                    ),
+                },
             ],
         )
         return json.loads(response.choices[0].message.content or "{}")

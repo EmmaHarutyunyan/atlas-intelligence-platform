@@ -9,4 +9,6 @@ def stable_record_hash(record: dict) -> str:
         "content": record.get("content", ""),
         "attributes": record.get("attributes", {}),
     }
-    return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()
+    ).hexdigest()

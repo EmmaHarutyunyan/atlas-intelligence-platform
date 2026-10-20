@@ -1,4 +1,4 @@
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 
 from apps.core.services.scraping.validators import validate_url
 

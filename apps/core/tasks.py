@@ -5,7 +5,7 @@ from celery import shared_task
 from django.db import transaction
 from django.utils import timezone
 
-from .models import JobRun, ScrapeJob, ScrapedRecord
+from .models import JobRun, ScrapedRecord, ScrapeJob
 from .services.scraping import scrape
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 
 def _run_job(job_id: int, run_id: int | None = None):
     job = ScrapeJob.objects.get(pk=job_id)
-    run = JobRun.objects.get(pk=run_id) if run_id else JobRun.objects.create(job=job, status="pending")
+    run = (
+        JobRun.objects.get(pk=run_id)
+        if run_id
+        else JobRun.objects.create(job=job, status="pending")
+    )
     started = time.monotonic()
     run.status = "running"
     run.save(update_fields=["status"])
@@ -23,20 +27,37 @@ def _run_job(job_id: int, run_id: int | None = None):
     logger.info("Atlas job started: job=%s run=%s", job.pk, run.pk)
 
     try:
-        result = scrape(job.url, job.strategy, job.custom_fields, job.max_pages, job.max_records, job.request_timeout, job.request_delay)
+        result = scrape(
+            job.url,
+            job.strategy,
+            job.custom_fields,
+            job.max_pages,
+            job.max_records,
+            job.request_timeout,
+            job.request_delay,
+        )
         records = result.get("records", [])[: job.max_records]
         created_count = 0
         with transaction.atomic():
             for item in records:
                 defaults = {
-                    "source_url": result["url"], "record_type": item.get("record_type", result.get("record_type", "page")),
-                    "title": item.get("title", "")[:500], "description": item.get("description", ""),
-                    "content": item.get("content", result.get("content", "")), "url": item.get("url", result["url"]),
-                    "image_url": item.get("image_url", ""), "confidence": result.get("confidence", "Low"),
-                    "metadata": result["data"].get("metadata", {}), "structured_data": item.get("structured_data", result.get("structured_data", [])),
+                    "source_url": result["url"],
+                    "record_type": item.get("record_type", result.get("record_type", "page")),
+                    "title": item.get("title", "")[:500],
+                    "description": item.get("description", ""),
+                    "content": item.get("content", result.get("content", "")),
+                    "url": item.get("url", result["url"]),
+                    "image_url": item.get("image_url", ""),
+                    "confidence": result.get("confidence", "Low"),
+                    "metadata": result["data"].get("metadata", {}),
+                    "structured_data": item.get(
+                        "structured_data", result.get("structured_data", [])
+                    ),
                     "data": {**result["data"], "attributes": item.get("attributes", {})},
                 }
-                _, created = ScrapedRecord.objects.update_or_create(job=job, content_hash=item["content_hash"], defaults=defaults)
+                _, created = ScrapedRecord.objects.update_or_create(
+                    job=job, content_hash=item["content_hash"], defaults=defaults
+                )
                 created_count += int(created)
         job.run_count += 1
         job.records_count = job.records.count()

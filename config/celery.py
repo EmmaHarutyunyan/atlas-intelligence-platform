@@ -3,7 +3,8 @@
 Celery Beat schedules (periodic tasks) are configured via
 `django-celery-beat`'s database-backed scheduler rather than a static
 `beat_schedule` dict, so recurring scraping jobs can be created/edited from
-the Django admin or API without a redeploy. Schedules are created programmatically by the core scheduling service.
+the Django admin or API without a redeploy. Schedules are created
+programmatically by the core scheduling service.
 """
 
 import os
