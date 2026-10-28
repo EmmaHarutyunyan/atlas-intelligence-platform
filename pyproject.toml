@@ -51,6 +51,6 @@ django_settings_module = "config.settings.test"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
-python_files = ["test_*.py"]
+python_files = ["tests.py", "test_*.py", "*_test.py"]
 addopts = "--reuse-db --cov=apps --cov-report=term-missing --cov-report=xml"
 testpaths = ["apps"]

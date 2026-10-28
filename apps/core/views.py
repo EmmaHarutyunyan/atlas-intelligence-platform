@@ -100,7 +100,7 @@ def run_job(request, job_id):
         return redirect("job_detail", job_id=job.id)
     run = JobRun.objects.create(job=job, status="pending")
     task = run_scrape_job.delay(job.pk, run.pk)
-    messages.success(request, f"Run queued successfully. Task: {task.id[:12]}…")
+    messages.success(request, f"Run queued successfully. Task: {task.id[:12]}â€¦")
     return redirect("job_detail", job_id=job.id)
 
 

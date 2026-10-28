@@ -119,9 +119,7 @@ def extract_repeated_items(soup: BeautifulSoup, base_url: str) -> list[dict]:
             title = (
                 links[0].get_text(" ", strip=True)
                 if links
-                else heading.get_text(" ", strip=True)
-                if heading
-                else text
+                else heading.get_text(" ", strip=True) if heading else text
             )
             image_source = image.get("src") or image.get("data-src") if image else ""
             candidates.append(

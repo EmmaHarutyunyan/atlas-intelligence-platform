@@ -1,5 +1,6 @@
 import logging
 import time
+from collections.abc import Callable
 from typing import Any
 
 from apps.core.services.scraping.deduplication import stable_record_hash
@@ -11,13 +12,14 @@ from apps.core.services.scraping.strategies import (
     PlaywrightStrategy,
     SeleniumStrategy,
 )
+from apps.core.services.scraping.strategies.base import ScrapingStrategy
 from apps.core.services.scraping.validators import validate_url
 
 logger = logging.getLogger(__name__)
 
 ScrapingData = dict[str, Any]
 
-STRATEGIES = {
+STRATEGIES: dict[str, Callable[[], ScrapingStrategy]] = {
     "beautifulsoup": BeautifulSoupStrategy,
     "playwright": PlaywrightStrategy,
     "selenium": SeleniumStrategy,

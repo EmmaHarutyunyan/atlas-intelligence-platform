@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
-from django.urls import include, path
+from django.urls import URLPattern, URLResolver, include, path
 
 from . import views
 
-urlpatterns = [
+urlpatterns: list[URLPattern | URLResolver] = [
     path("", views.home, name="home"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("register/", views.register, name="register"),
